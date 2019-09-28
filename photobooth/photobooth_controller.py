@@ -29,6 +29,7 @@ class PhotoboothController:
 		
 	def pressed_reject_print_button(self):
 		self.camera_overlay.remove_overlays()
+		self.waiting_for_confirm = False
 		
 	def pressed_accept_print_button(self):
 		self.camera_overlay.remove_top_overlay()
