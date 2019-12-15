@@ -17,6 +17,7 @@ class PhotoboothController:
 		self.printer = Printer()
 	
 	def pressed_capture_button(self):
+		print("\ncapture")
 		if self.waiting_for_confirm:
 			self.pressed_accept_print_button()
 			self.waiting_for_confirm = False
@@ -28,6 +29,7 @@ class PhotoboothController:
 			self.waiting_for_confirm = True
 		
 	def pressed_reject_print_button(self):
+		print("\nreject")
 		self.camera_overlay.remove_overlays()
 		self.waiting_for_confirm = False
 		

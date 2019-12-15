@@ -12,20 +12,10 @@ red_btn = Button(25)
 camera = Camera(resolution=(1024, 768))
 controller = PhotoboothController(camera, OUTPUT_PATH)
 
-
-def pressed_take_photo():
-    output = camera.capture(OUTPUT_PATH)
-    _preview_image(output)
-    show_text("Print?\nGreen - Yes\nRed - No", camera, FONT_SIZE)
-    time.sleep(10)
-    camera.show_overlay(None)
-    
-def _preview_image(path):
-    camera.show_overlay(path=path)
-
 green_btn.when_pressed = controller.pressed_capture_button
 red_btn.when_pressed = controller.pressed_reject_print_button
 
 app = App("Chris and Samiha's Wedding Photobooth!", 50, 50)
 
 app.display()
+camera.show_preview(False)
