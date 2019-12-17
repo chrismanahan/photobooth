@@ -15,7 +15,7 @@ class PhotoboothController:
 		self.image_helper = ImageHelper(camera.picam.resolution)
 		self.camera_overlay = CameraOverlay(self.camera)
 		self.waiting_for_confirm = False
-		self.printer = Printer("Canon_SELPHY_CP1300")
+		self.printer = Printer()
 	
 	def pressed_capture_button(self):
 		print("\ncapture")
@@ -39,7 +39,7 @@ class PhotoboothController:
 	def pressed_accept_print_button(self):
 		self.camera_overlay.remove_top_overlay()
 		self._show_printing()
-		self.printer.print(self.last_file_path)
+		self.printer.printFile(self.last_file_path)
 		self.camera_overlay.remove_overlays()
 		
 	def _show_countdown(self):

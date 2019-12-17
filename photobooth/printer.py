@@ -1,12 +1,29 @@
 import cups
+from enum import Enum
+import os
+
+class PrinterState(Enum):
+	READY = 3
+	PRINTING = 4
+	ERROR = 5
 
 class Printer:
-	def __init__(self, printerName):
+	def __init__(self):
 		self.conn = cups.Connection()
-		self.printer = self.conn.getPrinters()[printerName]
+		printers = self.conn.getPrinters()
+		self.printerName = list(printers.keys())[0]
 		
-	def print(self, filename):
-		pid = self.conn.printFile(self.printer, filename, filename, {})
-		while self.conn.getJobs().get(pid, None) is not None:
-			print("printing")
-			time.sleep(1)
+	def printFile(self, filename):
+		cmd = "lp -d " + self.printerName + " " + filename
+		os.popen(cmd)
+		print("\nprinting " + filename) 
+
+	def getState(self):
+		att = self._getAttributes()
+		return PrinterState(att['printer-state'])
+		
+	def getErrorMessage(self):
+		return self._getAttributes()['printer-state-message']
+		
+	def _getAttributes(self):
+		return self.conn.getAttributes(printerName)
