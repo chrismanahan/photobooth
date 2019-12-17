@@ -1,0 +1,7 @@
+gpiozero==1.5.1
+twython==3.7.0
+picamera==1.13
+auth==0.5.3
+guizero==1.1.0
+Pillow==6.2.1
+pycups==1.9.74
