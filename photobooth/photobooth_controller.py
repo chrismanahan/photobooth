@@ -26,6 +26,10 @@ class PhotoboothController:
 		
 		self.waiting_for_confirm = False
 		self.busy = False
+		
+	def _reset_state(self):
+		self.waiting_for_confirm = False
+		self.busy = False
 	
 	def pressed_capture_button(self):
 		print("\ncapture")
@@ -33,15 +37,16 @@ class PhotoboothController:
 		if self.waiting_for_confirm:
 			self.printer.printFile(self.last_file_path)
 			## todo show print screen
+			self.ui.clear_screen()
 			self.ui.show_main_screen()
-			self.waiting_for_confirm = False
-			self.busy = False
+			self._reset_state()
 		elif not self.busy:
 			self.busy = True
 			# show countdown
+			self.ui.clear_screen()
 			self.ui.show_countdown()
 			# flash lights
-			self._flash()
+			# self._flash()
 			# take photo
 			self.last_file_path = self._capture()
 			# confirm with user
@@ -52,8 +57,9 @@ class PhotoboothController:
 		if self.waiting_for_confirm:
 			print("\nreject")
 			self.last_file_path = None
+			self.ui.clear_screen()
 			self.ui.show_main_screen()
-			self.waiting_for_confirm = False
+			self._reset_state()
 		
 	def _confirm_print(self, path):
 		preview_image = self.image_helper.load_image(path)
