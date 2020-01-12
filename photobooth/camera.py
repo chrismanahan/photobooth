@@ -16,7 +16,7 @@ class Camera:
             self.picam.stop_preview()           
     
     def capture(self, output_path):
-        self.picam.capture(output_path)
+        self.picam.capture(output_path, format="jpeg")
                
     def show_overlay(self, path=None, img=None):
         if path is None and img is None:
@@ -27,11 +27,3 @@ class Camera:
                 img = load_image(path)
             print("adding overlay")
             add_overlay(self.picam, img)
-
-            
-    def _flash(self):
-        img = flash_image(self.picam.resolution)
-        preview_overlay(self.picam, img)
-        time.sleep(0.2)
-        remove_overlays(self.picam)
-        

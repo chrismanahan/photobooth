@@ -1,69 +1,71 @@
-from image_helper import ImageHelper
+from image_helper import ImageHelper, ImagePosition
 from printer import Printer
-from image_helper import ImageHelper
 from camera_overlay import CameraOverlay
+from gpiozero import Button
+from ui import UI
 from time import strftime, gmtime
-import time
 
 class PhotoboothController:
 	
-	def __init__(self, camera, output_path):
+	def __init__(self, camera, output_path, app):
 		self.output_path = output_path
 		self.last_file_path = None
+		self.app = app
 		self.camera = camera
-		self.camera.show_preview(True)
-		self.image_helper = ImageHelper(camera.picam.resolution)
 		self.camera_overlay = CameraOverlay(self.camera)
-		self.waiting_for_confirm = False
 		self.printer = Printer()
+		self.green_btn = Button(23)
+		self.red_btn = Button(25)
+		self.green_btn.when_pressed = self.pressed_capture_button
+		self.red_btn.when_pressed = self.pressed_reject_print_button
+		self.ui = UI(self.camera_overlay, camera.picam.resolution)
+		self.image_helper = ImageHelper(camera.picam.resolution)
+		
+		self.camera.show_preview(True)
+		self.ui.show_main_screen()
+		
+		self.waiting_for_confirm = False
+		self.busy = False
 	
 	def pressed_capture_button(self):
 		print("\ncapture")
 		output_path = None
 		if self.waiting_for_confirm:
-			self.pressed_accept_print_button()
+			self.printer.printFile(self.last_file_path)
+			## todo show print screen
+			self.ui.show_main_screen()
 			self.waiting_for_confirm = False
-		else:
-			self._show_countdown()
+			self.busy = False
+		elif not self.busy:
+			self.busy = True
+			# show countdown
+			self.ui.show_countdown()
+			# flash lights
 			self._flash()
+			# take photo
 			self.last_file_path = self._capture()
+			# confirm with user
 			self._confirm_print(self.last_file_path)
 			self.waiting_for_confirm = True
 
 	def pressed_reject_print_button(self):
-		print("\nreject")
-		self.last_file_path = None
-		self.camera_overlay.remove_overlays()
-		self.waiting_for_confirm = False
-		
-	def pressed_accept_print_button(self):
-		self.camera_overlay.remove_top_overlay()
-		self._show_printing()
-		self.printer.printFile(self.last_file_path)
-		self.camera_overlay.remove_overlays()
-		
-	def _show_countdown(self):
-		for i in range(3, 0, -1):
-			label = self.image_helper.create_text_image(str(i), 128)
-			self.camera_overlay.add_overlay(label)
-			time.sleep(1)
-			self.camera_overlay.remove_top_overlay()
-			time.sleep(0.05)
-		
-	def _show_printing(self):
-		print_message = self.image_helper.create_text_image("Printing...", 128)
-		self.camera_overlay.add_overlay(print_message)
+		if self.waiting_for_confirm:
+			print("\nreject")
+			self.last_file_path = None
+			self.ui.show_main_screen()
+			self.waiting_for_confirm = False
 		
 	def _confirm_print(self, path):
 		preview_image = self.image_helper.load_image(path)
-		confirm_message = self.image_helper.create_text_image("Red - Do Over\nGreen - Print!", 64)
-		self.camera_overlay.add_overlays([preview_image, confirm_message])
+		self.camera_overlay.add_overlay(preview_image)
+		self.ui.show_confirm_screen()
 		
 	def _flash(self):
-		img = self.image_helper.create_flash_image()
-		self.camera_overlay.add_overlay(img)
-		time.sleep(0.2)
-		self.camera_overlay.remove_top_overlay()
+		pass
+		#img = self.image_helper.create_flash_image()
+		#self.camera_overlay.add_overlay(img)
+		#time.sleep(0.2)
+		#self.camera_overlay.remove_top_overlay()
 		
 	def _capture(self):
 		output_path = self._new_output_path()
