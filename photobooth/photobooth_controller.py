@@ -42,7 +42,7 @@ class PhotoboothController:
 			self._reset_state()
 		elif not self.busy:
 			self.busy = True
-			# show countdown
+			# show countdowns
 			self.ui.clear_screen()
 			self.ui.show_countdown()
 			# flash lights
@@ -64,7 +64,7 @@ class PhotoboothController:
 	def _confirm_print(self, path):
 		preview_image = self.image_helper.load_image(path)
 		self.camera_overlay.add_overlay(preview_image)
-		self.ui.show_confirm_screen()
+		self.ui.show_confirm_screen(1)
 		
 	def _flash(self):
 		pass
