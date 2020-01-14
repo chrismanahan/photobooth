@@ -17,13 +17,3 @@ class Camera:
     
     def capture(self, output_path):
         self.picam.capture(output_path, format="jpeg")
-               
-    def show_overlay(self, path=None, img=None):
-        if path is None and img is None:
-            print("remove overlays")
-            remove_overlays(self.picam)
-        else:
-            if path is not None:
-                img = load_image(path)
-            print("adding overlay")
-            add_overlay(self.picam, img)
