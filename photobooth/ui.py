@@ -4,8 +4,9 @@ from PIL import Image
 import time
 
 class UIConst:
-	BUTTON_DIA = 250
-	FONT_SIZE = 128
+	BUTTON_DIA = 100
+	FONT_SIZE = 50
+	YPADDING = 200
 
 class UI:
 	def __init__(self, camera_overlay, resolution):
@@ -17,22 +18,23 @@ class UI:
 	def show_main_screen(self):
 		if self.main_screen_img == None:			
 			self.main_screen_img = Image.new('RGBA', self.resolution, (0, 0, 0, 0))
-			self.image_helper.create_circle_image(self.main_screen_img, UIConst.BUTTON_DIA, "green", ImagePosition.LOWERCENTER)
-			text = self.image_helper.create_button_text_image(self.main_screen_img, "Go!", UIConst.FONT_SIZE, UIConst.BUTTON_DIA, UIConst.BUTTON_DIA, ImagePosition.LOWERCENTER)
+			self.image_helper.create_circle_image(self.main_screen_img, UIConst.BUTTON_DIA, "green", ImagePosition.LOWERLEFT, yPadding = UIConst.YPADDING)
+			text = self.image_helper.create_button_text_image(self.main_screen_img, "Go!", UIConst.FONT_SIZE, UIConst.BUTTON_DIA, UIConst.BUTTON_DIA, ImagePosition.LOWERLEFT, yPadding = UIConst.YPADDING)
 		self.camera_overlay.add_overlay(self.main_screen_img)
 		
 	def show_confirm_screen(self, print_count):
 		img = Image.new('RGBA', self.resolution, (0, 0, 0, 0))
-		self.image_helper.create_circle_image(img, UIConst.BUTTON_DIA, "red", ImagePosition.LOWERLEFT)
-		self.image_helper.create_circle_image(img, UIConst.BUTTON_DIA, "green", ImagePosition.LOWERRIGHT)
-		self.image_helper.create_button_text_image(img, "Retake", UIConst.FONT_SIZE, UIConst.BUTTON_DIA, UIConst.BUTTON_DIA, ImagePosition.LOWERLEFT)
-		self.image_helper.create_button_text_image(img, "Print!", UIConst.FONT_SIZE, UIConst.BUTTON_DIA, UIConst.BUTTON_DIA, ImagePosition.LOWERRIGHT)
-		self.image_helper.create_text_image(img, "1", UIConst.FONT_SIZE, ImagePosition.UPPERCENTER, "grey")
+		printLabel = "Copies: " + str(print_count)
+		self.image_helper.create_circle_image(img, UIConst.BUTTON_DIA, "red", ImagePosition.LOWERLEFT, yPadding = UIConst.YPADDING)
+		self.image_helper.create_circle_image(img, UIConst.BUTTON_DIA, "green", ImagePosition.LOWERRIGHT, yPadding = UIConst.YPADDING)
+		self.image_helper.create_button_text_image(img, "Retake", UIConst.FONT_SIZE, UIConst.BUTTON_DIA, UIConst.BUTTON_DIA, ImagePosition.LOWERLEFT, yPadding = UIConst.YPADDING)
+		self.image_helper.create_button_text_image(img, "Print!", UIConst.FONT_SIZE, UIConst.BUTTON_DIA, UIConst.BUTTON_DIA, ImagePosition.LOWERRIGHT, yPadding = UIConst.YPADDING)
+		self.image_helper.create_text_image(img, printLabel, UIConst.FONT_SIZE, ImagePosition.UPPERCENTER, yPadding = UIConst.YPADDING)
 		self.camera_overlay.add_overlay(img)
 
 	def update_confirm_screen(self, print_count):
 		# pretty hacky since we're tearing down the whole ui just to update a label
-		self.clearn_screen()
+		self.clear_screen()
 		self.show_confirm_screen(print_count)
 	
 	def clear_screen(self):

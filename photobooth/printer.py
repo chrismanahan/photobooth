@@ -15,6 +15,7 @@ class Printer:
 		
 	def printFile(self, filename):
 		cmd = "lp -d " + self.printerName + " " + filename
+		print("\nrunning cmd:" + cmd)
 		os.popen(cmd)
 		print("\nprinting " + filename) 
 
