@@ -1,9 +1,15 @@
 from image_helper import ImageHelper, ImagePosition
 from printer import Printer
+from rotary import Rotary
 from camera_overlay import CameraOverlay
 from gpiozero import Button
 from ui import UI
 from time import strftime, gmtime
+
+GREEN_BTN_PIN = 23
+RED_BTN_PIN = 25
+ROTARY_CLK_PIN = 20
+ROTARY_DT_PIN = 21
 
 class PhotoboothController:
 	
@@ -14,12 +20,13 @@ class PhotoboothController:
 		self.camera = camera
 		self.camera_overlay = CameraOverlay(self.camera)
 		self.printer = Printer()
-		self.green_btn = Button(23)
-		self.red_btn = Button(25)
+		self.green_btn = Button(GREEN_BTN_PIN)
+		self.red_btn = Button(RED_BTN_PIN)
 		self.green_btn.when_pressed = self.pressed_capture_button
 		self.red_btn.when_pressed = self.pressed_reject_print_button
 		self.ui = UI(self.camera_overlay, camera.picam.resolution)
 		self.image_helper = ImageHelper(camera.picam.resolution)
+		self.rotary = Rotary(ROTARY_CLK_PIN, ROTARY_DT_PIN, upperBound=5)
 		
 		self.camera.show_preview(True)
 		self.ui.show_main_screen()
@@ -30,6 +37,7 @@ class PhotoboothController:
 	def _reset_state(self):
 		self.waiting_for_confirm = False
 		self.busy = False
+		self.rotary.clearCallback()
 	
 	def pressed_capture_button(self):
 		print("\ncapture")
@@ -65,12 +73,13 @@ class PhotoboothController:
 		preview_image = self.image_helper.load_image(path)
 		self.camera_overlay.add_overlay(preview_image)
 		self.ui.show_confirm_screen(1)
+		self.rotary.registerCallback(self.ui.update_confirm_screen)
 		
 	def _flash(self):
 		pass
 		#img = self.image_helper.create_flash_image()
 		#self.camera_overlay.add_overlay(img)
-		#time.sleep(0.2)
+		#time.sleep(0.2)register
 		#self.camera_overlay.remove_top_overlay()
 		
 	def _capture(self):
