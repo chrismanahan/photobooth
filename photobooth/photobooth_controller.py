@@ -38,13 +38,13 @@ class PhotoboothController:
 		self.waiting_for_confirm = False
 		self.busy = False
 		self.rotary.clearCallback()
+		self.rotary.resetCount()
 	
 	def pressed_capture_button(self):
 		print("\ncapture")
 		output_path = None
 		if self.waiting_for_confirm:
-			self.printer.printFile(self.last_file_path)
-			## todo show print screen
+			self.printer.printFile(self.last_file_path, copies=self.rotary.getValue())
 			self.ui.clear_screen()
 			self.ui.show_main_screen()
 			self._reset_state()
