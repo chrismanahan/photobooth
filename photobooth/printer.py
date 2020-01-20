@@ -13,8 +13,8 @@ class Printer:
 		printers = self.conn.getPrinters()
 		self.printerName = list(printers.keys())[0]
 		
-	def printFile(self, filename):
-		cmd = "lp -d " + self.printerName + " " + filename
+	def printFile(self, filename, count = 1):
+		cmd = "lp -d " + self.printerName + " -n " + str(count) + " " + filename
 		print("\nrunning cmd:" + cmd)
 		os.popen(cmd)
 		print("\nprinting " + filename) 

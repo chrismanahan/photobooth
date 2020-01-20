@@ -10,7 +10,7 @@ class CameraOverlay:
 	def remove_overlays(self):
 		for i in reversed(range(0, len(self.camera.picam.overlays))):
 			self.remove_overlay(i)
-	
+			
 	def remove_overlay(self, index):
 		print("remove overlay index " + str(index))
 		overlay = self.camera.picam.overlays[index]

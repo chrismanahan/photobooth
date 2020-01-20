@@ -35,7 +35,7 @@ class UI:
 	def update_confirm_screen(self, print_count):
 		print("update confirm screen with count: " + str(print_count))
 		# pretty hacky since we're tearing down the whole ui just to update a label
-		self.clear_screen()
+		self.camera_overlay.remove_top_overlay()
 		self.show_confirm_screen(print_count)
 	
 	def clear_screen(self):
